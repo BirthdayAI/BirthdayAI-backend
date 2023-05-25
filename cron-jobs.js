@@ -25,10 +25,6 @@ cron.schedule("0 8 * * *", async () => {
 
       if (today === reminderDate) {
         const message = await createMessage(reminder);
-        if (message.length > 160) {
-          console.error("Message is too long for SMS!");
-          continue;
-        }
 
         messageClient.messages.create({
           src: "Your-Source-Phone-Number",
@@ -44,22 +40,23 @@ async function createMessage(reminder) {
   let baseMessage = "REMINDER: ";
 
   if (reminder.type === "birthday") {
-    baseMessage += `Don't forget to wish ${reminder.name} a happy birthday! `;
+    baseMessage += `Wish ${reminder.name} a happy birthday! `;
   } else if (reminder.type === "anniversary") {
-    baseMessage += `Today is the anniversary of ${reminder.name}. Don't forget to message them! `;
+    baseMessage += `Anniversary of ${reminder.name} is today! `;
   } else if (reminder.type === "holiday") {
-    baseMessage += `Today is ${reminder.name} holiday. Have a joyous holiday! `;
+    baseMessage += `Today is ${reminder.name}! Happy Holidays! `;
   } else if (reminder.type === "other") {
     baseMessage += `Today is ${reminder.name}. Don't forget! `;
   }
 
   if (reminder.type !== "other") {
-    baseMessage += "Here are some messages you can send: ";
     const aiMessages = await generateAIMessages(reminder);
 
-    baseMessage += "1. " + aiMessages[0] + " ";
-    baseMessage += "2. " + aiMessages[1] + " ";
-    baseMessage += "3. " + aiMessages[2] + " ";
+    if (aiMessages[0].length > 100) {
+      return baseMessage;
+    }
+
+    baseMessage += "Message: " + aiMessages[0] + " ";
   }
 
   return baseMessage;
@@ -67,11 +64,16 @@ async function createMessage(reminder) {
 
 async function generateAIMessages(reminder) {
   const aiMessages = [];
-  const styles = [reminder.style, reminder.style, "simple"];
-
-  for (let i = 0; i < 3; i++) {
-    const prompt = `Create a ${styles[i]} ${reminder.type} message for ${reminder.name}.`;
-    const maxTokens = 20; // Adjust this based on the length you want for the AI-generated messages
+  const styles = [reminder.style];
+  for (let i = 0; i < 1; i++) {
+    let prompt = `Create a ${styles[i]} ${reminder.type} message for ${reminder.name} who is my ${relationship.type}.`;
+    if (reminder.type === "holiday") {
+      prompt = `Create a ${styles[i]} ${reminder.type} message to wish others a happy ${reminder.name}.`;
+    }
+    if (reminder.type === "anniversary") {
+      prompt = `Create a ${styles[i]} ${reminder.type} message for ${reminder.name}.`;
+    }
+    const maxTokens = 25; // Adjust this based on the length you want for the AI-generated messages
 
     const response = await axios.post(
       "https://api.openai.com/v1/completions",

@@ -19,6 +19,7 @@
     "moment": "^2.29.4",
     "node-cron": "^3.0.2",
     "plivo": "^4.46.1",
+    "stripe": "^12.6.0",
     "uuidv4": "^6.2.13"
   },
   "devDependencies": {
