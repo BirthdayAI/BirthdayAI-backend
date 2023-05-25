@@ -157,7 +157,7 @@ app.post("/create-checkout-session", async (req, res) => {
       cancel_url: `${process.env.FRONTEND_URL}/home?canceled=true`,
     });
 
-    res.redirect(303, session.url);
+    res.json({ sessionId: session.id });
   });
 });
 
