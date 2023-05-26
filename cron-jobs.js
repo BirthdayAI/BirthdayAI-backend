@@ -1,14 +1,10 @@
 const cron = require("node-cron");
 const moment = require("moment");
-const plivo = require("plivo");
+const telnyx = require("telnyx")(process.env.TELNYX_API_KEY);
 const axios = require("axios");
 const db = require("./app");
 
-const openaiApiKey = "Your-OpenAI-API-Key";
-const plivoAuthId = "Your-Plivo-Auth-Id";
-const plivoAuthToken = "Your-Plivo-Auth-Token";
-
-const messageClient = new plivo.Client(plivoAuthId, plivoAuthToken);
+const openaiApiKey = process.env.OPENAI_API_KEY;
 
 cron.schedule("0 8 * * *", async () => {
   const today = moment().format("MM-DD");
@@ -26,11 +22,16 @@ cron.schedule("0 8 * * *", async () => {
       if (today === reminderDate) {
         const message = await createMessage(reminder);
 
-        messageClient.messages.create({
-          src: "Your-Source-Phone-Number",
-          dst: user.phoneNumber,
-          text: message,
-        });
+        telnyx.messages
+          .create({
+            from: "+18333371805", // Your Telnyx number
+            to: user.phoneNumber,
+            text: message,
+            messaging_profile_id: process.env.TELNYX_MESSAGING_PROFILE_ID,
+          })
+          .then(function (response) {
+            const message = response.data; // asynchronously handled
+          });
       }
     }
   }

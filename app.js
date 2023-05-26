@@ -2,8 +2,16 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const admin = require("firebase-admin");
+const dotenv = require("dotenv");
+const dotenvExpand = require("dotenv-expand");
+
+const myLocalEnv = dotenv.config({ path: ".env.local" });
+dotenvExpand.expand(myLocalEnv);
+
+const myEnv = dotenv.config();
+dotenvExpand.expand(myEnv);
+
 const cronJobs = require("./cron-jobs");
-require("dotenv").config();
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const PORT = process.env.PORT || 5000;
 
@@ -117,6 +125,7 @@ async function authenticate(req, res, next) {
     res.status(401).end();
   }
 }
+
 app.use(authenticate);
 
 app.post("/create-checkout-session", async (req, res) => {
@@ -178,7 +187,7 @@ app.post("/create-portal-session", async (req, res) => {
       return_url: returnUrl,
     });
 
-    res.redirect(303, portalSession.url);
+    res.json({ sessionId: portalSession.id, url: portalSession.url });
   });
 });
 
