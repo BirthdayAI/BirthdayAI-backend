@@ -30,7 +30,14 @@ const usersRoutes = require("./routes/users-route");
 const HttpError = require("./models/http-error");
 
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: ["https://birthdayaiapp.com", "http://localhost:3000"],
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    optionsSuccessStatus: 200,
+  })
+);
+
 app.use(bodyParser.json());
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
