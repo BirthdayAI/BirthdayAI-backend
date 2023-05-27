@@ -1,4 +1,4 @@
-const { db } = require("../app");
+const db = require("../database");
 
 function getUserOrAddUser(req, res, next) {
   const uid = req.body.id;

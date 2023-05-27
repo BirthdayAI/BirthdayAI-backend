@@ -19,6 +19,7 @@
     "firebase-admin": "^11.5.0",
     "moment": "^2.29.4",
     "node-cron": "^3.0.2",
+    "openai": "^3.2.1",
     "stripe": "^12.6.0",
     "telnyx": "^1.23.0",
     "uuidv4": "^6.2.13"

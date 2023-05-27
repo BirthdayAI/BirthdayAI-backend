@@ -1,7 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const admin = require("firebase-admin");
 const dotenv = require("dotenv");
 const dotenvExpand = require("dotenv-expand");
 
@@ -11,20 +10,10 @@ dotenvExpand.expand(myLocalEnv);
 const myEnv = dotenv.config();
 dotenvExpand.expand(myEnv);
 
+const db = require("./database");
 const cronJobs = require("./cron-jobs");
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const PORT = process.env.PORT || 5000;
-
-const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://birthdayai-ae57c-default-rtdb.firebaseio.com",
-});
-
-const db = admin.database();
-
-module.exports.db = db;
 
 const usersRoutes = require("./routes/users-route");
 const HttpError = require("./models/http-error");
