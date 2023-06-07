@@ -46,7 +46,7 @@ async function updateSubscriptionStatusInFirebase(customer, isActive) {
       const updates = {};
       updates["/users/" + Object.keys(snapshot.val())[0] + "/subscription"] =
         isActive;
-      firebase.database().ref().update(updates);
+      admin.database().ref().update(updates);
     } else {
       console.log(`No matching Firebase user for Stripe customer ${customer}`);
     }
