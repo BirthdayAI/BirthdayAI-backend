@@ -22,7 +22,11 @@ const HttpError = require("./models/http-error");
 const app = express();
 app.use(
   cors({
-    origin: ["https://birthdayaiapp.com", "http://localhost:3000"],
+    origin: [
+      "https://birthdayaiapp.com",
+      "http://localhost:3000",
+      "https://checkout.stripe.com",
+    ],
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     optionsSuccessStatus: 200,
   })
