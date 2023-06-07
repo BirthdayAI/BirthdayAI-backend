@@ -59,7 +59,12 @@ async function updateSubscriptionStatusInFirebase(customer, isActive) {
 
 app.post(
   "/webhook",
-  express.raw({ type: "application/json" }),
+  bodyParser.raw({
+    type: "application/json",
+    verify: function (req, res, buf) {
+      req.rawBody = buf;
+    },
+  }),
   async (request, response) => {
     let event = request.body;
     const endpointSecret = process.env.STRIPE_SIGNING_SECRET;
