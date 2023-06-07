@@ -80,8 +80,11 @@ app.post(
       case "customer.subscription.created":
       case "customer.subscription.updated":
         subscription = event.data.object;
+        console.log(subscription);
         status = subscription.status;
+        console.log(status);
         customer = subscription.customer;
+        console.log(customer);
         console.log(
           `Subscription status for customer ${customer} is ${status}.`
         );
