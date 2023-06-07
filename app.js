@@ -26,6 +26,7 @@ app.use(
       "https://birthdayaiapp.com",
       "http://localhost:3000",
       "https://checkout.stripe.com",
+      "https://dashboard.stripe.com",
     ],
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     optionsSuccessStatus: 200,
