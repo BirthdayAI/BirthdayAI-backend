@@ -33,10 +33,6 @@ app.use(
   })
 );
 
-app.use(bodyParser.json());
-app.use(express.static("public"));
-app.use(express.urlencoded({ extended: true }));
-
 // Utility function to update subscription status in Firebase
 async function updateSubscriptionStatusInFirebase(customer, isActive) {
   // Get the Firebase user with this Stripe customer ID
@@ -59,12 +55,7 @@ async function updateSubscriptionStatusInFirebase(customer, isActive) {
 
 app.post(
   "/webhook",
-  bodyParser.raw({
-    type: "application/json",
-    verify: function (req, res, buf) {
-      req.rawBody = buf;
-    },
-  }),
+  express.raw({ type: "application/json" }),
   async (request, response) => {
     let event = request.body;
     const endpointSecret = process.env.STRIPE_SIGNING_SECRET;
@@ -72,7 +63,7 @@ app.post(
       const signature = request.headers["stripe-signature"];
       try {
         event = stripe.webhooks.constructEvent(
-          request.rawBody.toString(),
+          request.body,
           signature,
           endpointSecret
         );
@@ -111,6 +102,10 @@ app.post(
     response.send();
   }
 );
+
+app.use(bodyParser.json());
+app.use(express.static("public"));
+app.use(express.urlencoded({ extended: true }));
 
 // Add the authenticate middleware here
 async function authenticate(req, res, next) {
