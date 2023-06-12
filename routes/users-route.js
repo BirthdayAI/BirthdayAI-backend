@@ -4,6 +4,7 @@ const {
   getUserOrAddUser,
   subscribe,
   unsubscribe,
+  updateSubscription,
   editReminder,
   deleteReminder,
   addReminder,
@@ -15,6 +16,7 @@ const router = express.Router();
 router.post("/", getUserOrAddUser);
 router.put("/:id/subscribe", subscribe);
 router.put("/:id/unsubscribe", unsubscribe);
+router.put("/:id/subscription", updateSubscription);
 router.put("/:id/reminders/:reminderId", editReminder);
 router.delete("/:id/reminders/:reminderId", deleteReminder);
 router.post("/:id/reminders", addReminder);

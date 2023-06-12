@@ -36,6 +36,19 @@ function getUserOrAddUser(req, res, next) {
     });
 }
 
+function updateSubscription(req, res, next) {
+  const uid = req.params.id;
+  const isSubscribed = req.body.isSubscribed; // now getting the value from the request body
+  db.ref("users/" + uid)
+    .update({ subscription: isSubscribed })
+    .then(function () {
+      const message = isSubscribed
+        ? "User subscribed successfully"
+        : "User unsubscribed successfully";
+      res.json({ message });
+    });
+}
+
 function subscribe(req, res, next) {
   const uid = req.params.id;
   db.ref("users/" + uid)
@@ -107,6 +120,7 @@ module.exports = {
   getUserOrAddUser,
   subscribe,
   unsubscribe,
+  updateSubscription,
   editReminder,
   deleteReminder,
   addReminder,
