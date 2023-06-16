@@ -1,7 +1,7 @@
 const cron = require("node-cron");
 const moment = require("moment");
 const telnyx = require("telnyx")(process.env.TELNYX_API_KEY);
-const db = require("./database");
+const { db } = require("./database");
 const { Configuration, OpenAIApi } = require("openai");
 
 const configuration = new Configuration({
@@ -9,6 +9,8 @@ const configuration = new Configuration({
 });
 
 const openai = new OpenAIApi(configuration);
+
+module.exports = openai;
 
 function removeEmojis(text) {
   return text.replace(

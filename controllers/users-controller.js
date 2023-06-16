@@ -1,4 +1,6 @@
-const db = require("../database");
+const { db, bucket } = require("../database");
+const openai = require("../cron-jobs");
+const axios = require("axios");
 
 function getUserOrAddUser(req, res, next) {
   const uid = req.body.id;
@@ -116,6 +118,126 @@ function sendFeedback(req, res, next) {
   });
 }
 
+async function addCard(req, res, next) {
+  const uid = req.params.id;
+  const cardId = req.body.id;
+
+  let card = req.body;
+
+  let prompt = `A ${card.type} card`;
+
+  if (card.type === "holiday") {
+    prompt = `A ${card.type} card for ${card.name}`;
+  }
+
+  const response = await openai.createImage({
+    prompt: prompt,
+    n: 1,
+    size: "256x256",
+  });
+  const image_url = response.data.data[0].url;
+  axios({
+    url: image_url,
+    responseType: "arraybuffer",
+  })
+    .then((response) => {
+      const imageBuffer = Buffer.from(response.data, "binary");
+
+      const file = bucket.file(`userImages/${uid}/${cardId}.jpg`);
+
+      const blobStream = file.createWriteStream({
+        metadata: {
+          contentType: "image/jpg",
+        },
+      });
+
+      blobStream.on("error", (err) => {
+        console.log(
+          "Something is wrong! Unable to upload at the moment." + err
+        );
+      });
+
+      blobStream.on("finish", async () => {
+        const [url] = await file.getSignedUrl({
+          action: "read",
+          expires: "03-17-2300",
+        });
+        console.log("The signed url for the image is:", url);
+
+        card = { ...card, link: url };
+
+        const newCardRef = db.ref(`users/${uid}/cards/${cardId}`);
+        try {
+          await newCardRef.set(card);
+          res.json({
+            message: "Card added successfully",
+            cardId: cardId,
+            card: card,
+          });
+        } catch (error) {
+          console.error(
+            "There has been a problem with your add operation:",
+            error
+          );
+          next(error);
+        }
+      });
+
+      blobStream.end(imageBuffer);
+    })
+    .catch((error) => {
+      console.log("error in download or upload: ", error);
+    });
+}
+
+async function deleteCard(req, res, next) {
+  const uid = req.params.id;
+  const cardId = req.params.cardId;
+
+  // Create a reference to the file to delete
+  const file = bucket.file(`userImages/${uid}/${cardId}.jpg`);
+
+  // Delete the file
+  file
+    .delete()
+    .then(() => {
+      // File deleted successfully
+      console.log(`Successfully deleted file: userImages/${uid}/${cardId}.jpg`);
+
+      // Delete the reference to this card in the database
+      db.ref("users/" + uid + "/cards/" + cardId)
+        .remove()
+        .then(() => {
+          res.json({ message: "Card deleted successfully" });
+        })
+        .catch((error) => {
+          console.error(
+            "There was an error while deleting card from DB:",
+            error
+          );
+          next(error);
+        });
+    })
+    .catch((err) => {
+      // Uh-oh, an error occurred!
+      console.error(
+        "There was an error while deleting image from Storage:",
+        err
+      );
+      next(err);
+    });
+}
+
+function editCard(req, res, next) {
+  const uid = req.params.id;
+  const cardId = req.params.cardId;
+  db.ref("users/" + uid + "/cards/" + cardId)
+    .update(req.body)
+    .then(function () {
+      res.json({ message: "Card edited successfully", card: req.body });
+    });
+}
+
 module.exports = {
   getUserOrAddUser,
   subscribe,
@@ -125,4 +247,7 @@ module.exports = {
   deleteReminder,
   addReminder,
   sendFeedback,
+  addCard,
+  deleteCard,
+  editCard,
 };

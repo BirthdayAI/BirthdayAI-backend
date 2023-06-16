@@ -11,7 +11,7 @@ dotenvExpand.expand(myLocalEnv);
 const myEnv = dotenv.config();
 dotenvExpand.expand(myEnv);
 
-const db = require("./database");
+const {db} = require("./database");
 const cronJobs = require("./cron-jobs");
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const PORT = process.env.PORT || 5000;
