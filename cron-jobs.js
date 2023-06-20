@@ -165,3 +165,21 @@ async function generateAIGift(reminder) {
 
   return aiMessages;
 }
+
+cron.schedule("0 0 1 * *", async () => {
+  const usersSnapshot = await db.ref("users").once("value");
+  const users = usersSnapshot.val();
+
+  for (const userId in users) {
+    const userRef = db.ref(`users/${userId}`);
+    try {
+      await userRef.update({ monthlyCardCount: 0 });
+      console.log(`monthlyCardCount for user ${userId} reset to 0.`);
+    } catch (error) {
+      console.error(
+        `Error resetting monthlyCardCount for user ${userId}:`,
+        error
+      );
+    }
+  }
+});

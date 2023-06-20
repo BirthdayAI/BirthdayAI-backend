@@ -167,12 +167,21 @@ async function addCard(req, res, next) {
         card = { ...card, link: url };
 
         const newCardRef = db.ref(`users/${uid}/cards/${cardId}`);
+        const userRef = db.ref(`users/${uid}`);
+        let snapshot = await userRef.once("value");
+        let userData = snapshot.val();
+        let monthlyCardCount =
+          userData && userData.monthlyCardCount
+            ? userData.monthlyCardCount + 1
+            : 1;
         try {
           await newCardRef.set(card);
+          await userRef.update({ monthlyCardCount: monthlyCardCount });
           res.json({
             message: "Card added successfully",
             cardId: cardId,
             card: card,
+            monthlyCardCount: monthlyCardCount,
           });
         } catch (error) {
           console.error(
