@@ -130,6 +130,10 @@ async function addCard(req, res, next) {
     prompt = `A ${card.type} card for ${card.name}`;
   }
 
+  if (card.type === "anniversary") {
+    prompt = "A card for an anniversary";
+  }
+
   const response = await openai.createImage({
     prompt: prompt,
     n: 1,

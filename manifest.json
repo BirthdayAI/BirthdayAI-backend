@@ -1,0 +1,17 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "BirthdayAI",
+  "name_for_model": "birthdayai",
+  "description_for_human": "Manage your birthday reminders and send personalized AI-generated messages and cards.",
+  "description_for_model": "Helps users manage birthday reminders, and generates personalized messages and cards for their loved ones.",
+  "auth": {
+    "type": "oauth"
+  },
+  "api": {
+    "type": "openapi",
+    "url": "http://localhost:3000/oas.json"
+  },
+  "logo_url": "https://i.postimg.cc/pdXq1q8b/Birthday-AISmall.png",
+  "contact_email": "contact@birthdayaiapp.com",
+  "legal_info_url": "http://www.birthdayaiapp.com/privacy"
+}

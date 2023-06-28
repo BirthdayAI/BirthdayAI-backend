@@ -11,9 +11,11 @@ dotenvExpand.expand(myLocalEnv);
 const myEnv = dotenv.config();
 dotenvExpand.expand(myEnv);
 
-const {db} = require("./database");
+const { db } = require("./database");
 const cronJobs = require("./cron-jobs");
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+const oas = require("./oas.json");
+const manifest = require("./manifest.json");
 const PORT = process.env.PORT || 5000;
 
 const usersRoutes = require("./routes/users-route");
@@ -197,6 +199,14 @@ app.post("/create-portal-session", async (req, res) => {
 });
 
 app.use("/api/users", usersRoutes);
+
+app.get("/oas.json", (req, res) => {
+  res.json(oas);
+});
+
+app.get("/.well-known/ai-plugin.json", (req, res) => {
+  res.json(manifest);
+});
 
 app.use((req, res, next) => {
   throw new HttpError("Could not find this route");

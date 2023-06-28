@@ -1,0 +1,303 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "BirthdayAI API",
+    "description": "API for managing users and birthday reminders, as well as sending personalized cards."
+  },
+  "paths": {
+    "/users": {
+      "post": {
+        "summary": "Add new user or retrieve existing user",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "User ID"
+                  },
+                  "phoneNumber": {
+                    "type": "string",
+                    "description": "User's phone number"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User details or success message for user creation"
+          }
+        }
+      }
+    },
+    "/users/{id}/subscribe": {
+      "put": {
+        "summary": "Subscribe user to the service",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "User ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success message for subscription"
+          }
+        }
+      }
+    },
+    "/users/{id}/unsubscribe": {
+      "put": {
+        "summary": "Unsubscribe user from the service",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "User ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success message for unsubscription"
+          }
+        }
+      }
+    },
+    "/users/{id}/subscription": {
+      "put": {
+        "summary": "Update user subscription",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "User ID"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "isSubscribed": {
+                    "type": "boolean",
+                    "description": "Subscription status"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success message for subscription update"
+          }
+        }
+      }
+    },
+    "/users/{id}/reminders": {
+      "post": {
+        "summary": "Add a reminder for a user",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "User ID"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Reminder ID"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success message for adding reminder"
+          }
+        }
+      }
+    },
+    "/users/{id}/reminders/{reminderId}": {
+      "put": {
+        "summary": "Edit a specific reminder for a user",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "User ID"
+          },
+          {
+            "name": "reminderId",
+            "in": "path",
+            "required": true,
+            "description": "Reminder ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success message for editing reminder"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a specific reminder for a user",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "User ID"
+          },
+          {
+            "name": "reminderId",
+            "in": "path",
+            "required": true,
+            "description": "Reminder ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success message for deleting reminder"
+          }
+        }
+      }
+    },
+    "/users/{id}/feedback": {
+      "post": {
+        "summary": "Submit feedback for a user",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "User ID"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "feedback": {
+                    "type": "string",
+                    "description": "User feedback"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success message for sending feedback"
+          }
+        }
+      }
+    },
+    "/users/{id}/cards": {
+      "post": {
+        "summary": "Add a card for a user",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "User ID"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Card ID"
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "Card type"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success message for adding card"
+          }
+        }
+      }
+    },
+    "/users/{id}/cards/{cardId}": {
+      "put": {
+        "summary": "Edit a specific card for a user",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "User ID"
+          },
+          {
+            "name": "cardId",
+            "in": "path",
+            "required": true,
+            "description": "Card ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success message for editing card"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a specific card for a user",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "User ID"
+          },
+          {
+            "name": "cardId",
+            "in": "path",
+            "required": true,
+            "description": "Card ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success message for deleting card"
+          }
+        }
+      }
+    }
+  }
+}
